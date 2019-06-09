@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>RTELP - Admin</title>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.0.3/adapter.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" type="text/css"/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css" type="text/css"/>
+<link rel="stylesheet" href="index.css" type="text/css"/>
+<!-- import necessary js functions -->
+<script type="text/javascript" src="janus.js" ></script>
+<script type="text/javascript" src="index.js"></script>
+<!---->
+
+</head>
+<body>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div>
+				<h1>Real-time e-Learning Platform - Admin</h1>
+                <button class="btn btn-success" autocomplete="off" id="start">Start Streaming</button>
+            </div>
+			<div class="container" id="room">
+                    <h3>Preview</h3>
+				<div class="row">
+                    <div class="panel-content">
+                        <div class="panel-body col-12 col-sm-6 col-md-12 col-lg-6 col-xl-6" id="screencapture">
+                            <div class="player" id="screenvideoplayer">
+                                <video class="rounded centered" id="screenvideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
+                            </div>
+                        </div>
+                        <div class="panel-body col-12 col-sm-6 col-md-12 col-lg-6 col-xl-6" id="cameracapture">
+                            <div class="player" id="cameravideoplayer">
+                                <video class="rounded centered" id="cameravideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
