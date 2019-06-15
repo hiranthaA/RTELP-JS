@@ -162,6 +162,7 @@ $(document).ready(function() {
                                             console.log("Session id: "+room);
                                             console.log("Room Title: "+msg["description"]);
 											Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
+											console.log("******************************");
 											if(role === "publisher") {
 												// This is our session, publish our stream
 												Janus.debug("Negotiating WebRTC stream for our screen (capture " + capture + ")");
@@ -181,6 +182,7 @@ $(document).ready(function() {
 													});
 											} else {
 												// We're just watching a session, any feed to attach to?
+												console.log("******************************");
 												if(msg["publishers"] !== undefined && msg["publishers"] !== null) {
 													var list = msg["publishers"];
 													Janus.debug("Got a list of available publishers/feeds:");
@@ -456,19 +458,6 @@ function newRemoteFeed(id, display) {
 				// The subscriber stream is recvonly, we don't expect anything here
 			},
 			onremotestream: function(stream) {
-				if($('#screenvideo').length === 0) {
-					// No remote video yet
-					$('#screencapture').append('<video class="rounded centered" id="waitingvideo" width="100%" height="100%" />');
-					$('#screencapture').append('<video class="rounded centered hide" id="screenvideo" width="100%" height="100%" autoplay playsinline/>');
-					// Show the video, hide the spinner and show the resolution when we get a playing event
-					$("#screenvideo").bind("playing", function () {
-						$('#waitingvideo').remove();
-						$('#screenvideo').removeClass('hide');
-						if(spinner !== null && spinner !== undefined)
-							spinner.stop();
-						spinner = null;
-					});
-				}
 				Janus.attachMediaStream($('#screenvideo').get(0), stream);
 			},
 			oncleanup: function() {

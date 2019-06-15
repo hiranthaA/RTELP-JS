@@ -367,27 +367,27 @@ function checkEnterJoin(field, event) {
 	}
 }
 
-function joinScreen() {
-	// Join an existing screen sharing session
-	$('#desc').attr('disabled', true);
-	$('#create').attr('disabled', true).unbind('click');
-	$('#roomid').attr('disabled', true);
-	$('#join').attr('disabled', true).unbind('click');
-	var roomid = $('#roomid').val();
-	if(isNaN(roomid)) {
-		bootbox.alert("Session identifiers are numeric only");
-		$('#desc').removeAttr('disabled', true);
-		$('#create').removeAttr('disabled', true).click(preShareScreen);
-		$('#roomid').removeAttr('disabled', true);
-		$('#join').removeAttr('disabled', true).click(joinScreen);
-		return;
-	}
-	room = parseInt(roomid);
-	role = "listener";
-	myusername = randomString(12);
-	var register = { "request": "join", "room": room, "ptype": "publisher", "display": myusername };
-	screentest.send({"message": register});
-}
+// function joinScreen() {
+// 	// Join an existing screen sharing session
+// 	$('#desc').attr('disabled', true);
+// 	$('#create').attr('disabled', true).unbind('click');
+// 	$('#roomid').attr('disabled', true);
+// 	$('#join').attr('disabled', true).unbind('click');
+// 	var roomid = $('#roomid').val();
+// 	if(isNaN(roomid)) {
+// 		bootbox.alert("Session identifiers are numeric only");
+// 		$('#desc').removeAttr('disabled', true);
+// 		$('#create').removeAttr('disabled', true).click(preShareScreen);
+// 		$('#roomid').removeAttr('disabled', true);
+// 		$('#join').removeAttr('disabled', true).click(joinScreen);
+// 		return;
+// 	}
+// 	room = parseInt(roomid);
+// 	role = "listener";
+// 	myusername = randomString(12);
+// 	var register = { "request": "join", "room": room, "ptype": "publisher", "display": myusername };
+// 	screentest.send({"message": register});
+// }
 
 function newRemoteFeed(id, display) {
 	// A new feed has been published, create a new plugin handle and attach to it as a listener
