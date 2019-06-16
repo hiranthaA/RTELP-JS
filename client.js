@@ -101,15 +101,7 @@ $(document).ready(function() {
 									$('#details').remove();
 									screentest = pluginHandle;
 									Janus.log("Plugin attached! (" + screentest.getPlugin() + ", id=" + screentest.getId() + ")");
-									// Prepare the username registration
-									// $('#screenmenu').removeClass('hide').show();
-									// $('#createnow').removeClass('hide').show();
-									// $('#create').click(preShareScreen);
-									// $('#joinnow').removeClass('hide').show();
-									// $('#join').click(joinScreen);
-                                    // $('#desc').focus();
                                     joinScreen();
-                                    console.log("preShareScreen function below");
 									$('#start').removeAttr('disabled').html("Stop Watching")
 										.click(function() {
 											$(this).attr('disabled', true);
@@ -191,11 +183,13 @@ $(document).ready(function() {
 														var id = list[f]["id"];
 														var display = list[f]["display"];
 														Janus.debug("  >> [" + id + "] " + display);
+														//attach publisher's remotevideo to client video player
 														newRemoteFeed(id, display)
 													}
 												}
 											}
 										} else if(event === "event") {
+											console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 											// Any feed to attach to?
 											if(role === "listener" && msg["publishers"] !== undefined && msg["publishers"] !== null) {
 												var list = msg["publishers"];
@@ -227,30 +221,25 @@ $(document).ready(function() {
 										screentest.handleRemoteJsep({jsep: jsep});
 									}
 								},
-								onlocalstream: function(stream) {
-									Janus.debug(" ::: Got a local stream :::");
-									Janus.debug(stream);
-									$('#screenmenu').hide();
-									$('#room').removeClass('hide').show();
-									if($('#screenvideo').length === 0) {
-										$('#screencapture').append('<video class="rounded centered" id="screenvideo" width="100%" height="100%" autoplay playsinline muted="muted"/>');
-									}
-									Janus.attachMediaStream($('#screenvideo').get(0), stream);
-									if(screentest.webrtcStuff.pc.iceConnectionState !== "completed" &&
-											screentest.webrtcStuff.pc.iceConnectionState !== "connected") {
-										$("#screencapture").parent().block({
-											message: '<b>Publishing...</b>',
-											css: {
-												border: 'none',
-												backgroundColor: 'transparent',
-												color: 'white'
-											}
-										});
-									}
-								},
-								onremotestream: function(stream) {
-									// The publisher stream is sendonly, we don't expect anything here
-								},
+								// onlocalstream: function(stream) {
+								// 	Janus.debug(" ::: Got a local stream :::");
+								// 	Janus.debug(stream);
+								// 	Janus.attachMediaStream($('#screenvideo').get(0), stream);
+								// 	if(screentest.webrtcStuff.pc.iceConnectionState !== "completed" &&
+								// 			screentest.webrtcStuff.pc.iceConnectionState !== "connected") {
+								// 		$("#screencapture").parent().block({
+								// 			message: '<b>Publishing...</b>',
+								// 			css: {
+								// 				border: 'none',
+								// 				backgroundColor: 'transparent',
+								// 				color: 'white'
+								// 			}
+								// 		});
+								// 	}
+								// },
+								// onremotestream: function(stream) {
+								// 	// The publisher stream is sendonly, we don't expect anything here
+								// },
 								oncleanup: function() {
 									Janus.log(" ::: Got a cleanup notification :::");
 									$('#screencapture').empty();
@@ -290,19 +279,6 @@ function preShareScreen() {
 		});
 		return;
 	}
-	// Create a new room
-	// $('#desc').attr('disabled', true);
-	// $('#create').attr('disabled', true).unbind('click');
-	// $('#roomid').attr('disabled', true);
-	// $('#join').attr('disabled', true).unbind('click');
-	// if($('#desc').val() === "") {
-	// 	bootbox.alert("Please insert a description for the room");
-	// 	$('#desc').removeAttr('disabled', true);
-	// 	$('#create').removeAttr('disabled', true).click(preShareScreen);
-	// 	$('#roomid').removeAttr('disabled', true);
-	// 	$('#join').removeAttr('disabled', true).click(joinScreen);
-	// 	return;
-	// }
 	capture = "screen";
 	if(navigator.mozGetUserMedia) {
 		// Firefox needs a different constraint for screen and window sharing
@@ -370,19 +346,9 @@ function checkEnterJoin(field, event) {
 }
 
 function joinScreen() {
-	// Join an existing screen sharing session
-	// $('#desc').attr('disabled', true);
-	// $('#create').attr('disabled', true).unbind('click');
-	// $('#roomid').attr('disabled', true);
-	// $('#join').attr('disabled', true).unbind('click');
-    //var roomid = $('#roomid').val();
     var roomid = getAllUrlParams().scrnid;
 	if(isNaN(roomid)) {
 		bootbox.alert("Session identifiers are numeric only");
-		// $('#desc').removeAttr('disabled', true);
-		// $('#create').removeAttr('disabled', true).click(preShareScreen);
-		// $('#roomid').removeAttr('disabled', true);
-		// $('#join').removeAttr('disabled', true).click(joinScreen);
 		return;
 	}
 	room = parseInt(roomid);
@@ -392,6 +358,8 @@ function joinScreen() {
 	screentest.send({"message": register});
 }
 
+
+//this is where client is attached as a listner
 function newRemoteFeed(id, display) {
 	// A new feed has been published, create a new plugin handle and attach to it as a listener
 	source = id;
@@ -427,8 +395,6 @@ function newRemoteFeed(id, display) {
 							spinner.spin();
 						}
 						Janus.log("Successfully attached to feed " + id + " (" + display + ") in room " + msg["room"]);
-						// $('#screenmenu').hide();
-						// $('#room').removeClass('hide').show();
 					} else {
 						// What has just happened?
 					}
