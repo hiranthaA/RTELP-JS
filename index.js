@@ -60,6 +60,7 @@ var myid = null;
 var capture = null;
 var role = null;
 var room = null;
+//var room = "rtelp1";
 var source = null;
 
 var spinner = null;
@@ -96,7 +97,7 @@ $(document).ready(function() {
 						// Attach screen to video room test plugin
 						screenPublisherInit();
 						// Attach webcam to video room test plugin
-						webCamPublisherInit();
+						//webCamPublisherInit();
 					},
 					error: function(error) {
 						Janus.error(error);
@@ -180,181 +181,33 @@ function preShareScreen() {
 
 function shareScreen() {
 	// Create a new room
-    //var desc = $('#desc').val();
+	//var desc = $('#desc').val();
+	console.log("YOU ARE NOW IN shareScreen");
     var desc = "test-screen-capture";
 	role = "publisher";
+
 	var create = { "request": "create", "description": desc, "bitrate": 500000, "publishers": 2 };
 	screentest.send({"message": create, success: function(result) {
 		var event = result["videoroom"];
+		console.log(event);
 		Janus.debug("Event: " + event);
 		if(event != undefined && event != null) {
 			// Our own screen sharing session has been created, join it
 			room = result["room"];
+			console.log("this is the room: "+room);
 			Janus.log("Screen sharing session created: " + room);
 			myusername = randomString(12);
-			var register = { "request": "join", "room": room, "ptype": "publisher", "display": myusername };
+			var register = { "request": "join", "room": room, "ptype": "publisher", "display": "screen_publisher" };
 			screentest.send({"message": register});
+			webCamPublisherInit();
 		}
 	}});
 }
 
-// function checkEnterJoin(field, event) {
-// 	var theCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
-// 	if(theCode == 13) {
-// 		joinScreen();
-// 		return false;
-// 	} else {
-// 		return true;
-// 	}
-// }
 
-// function joinScreen() {
-// 	// Join an existing screen sharing session
-// 	$('#desc').attr('disabled', true);
-// 	$('#create').attr('disabled', true).unbind('click');
-// 	$('#roomid').attr('disabled', true);
-// 	$('#join').attr('disabled', true).unbind('click');
-// 	var roomid = $('#roomid').val();
-// 	if(isNaN(roomid)) {
-// 		bootbox.alert("Session identifiers are numeric only");
-// 		$('#desc').removeAttr('disabled', true);
-// 		$('#create').removeAttr('disabled', true).click(preShareScreen);
-// 		$('#roomid').removeAttr('disabled', true);
-// 		$('#join').removeAttr('disabled', true).click(joinScreen);
-// 		return;
-// 	}
-// 	room = parseInt(roomid);
-// 	role = "listener";
-// 	myusername = randomString(12);
-// 	var register = { "request": "join", "room": room, "ptype": "publisher", "display": myusername };
-// 	screentest.send({"message": register});
-// }
-
-
-//might require for the students webcam feed
-// function newRemoteFeed(id, display) {
-// 	// A new feed has been published, create a new plugin handle and attach to it as a listener
-// 	source = id;
-// 	var remoteFeed = null;
-// 	janus.attach(
-// 		{
-// 			plugin: "janus.plugin.videoroom",
-// 			opaqueId: opaqueId,
-// 			success: function(pluginHandle) {
-// 				remoteFeed = pluginHandle;
-// 				Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
-// 				Janus.log("  -- This is a subscriber");
-// 				// We wait for the plugin to send us an offer
-// 				var listen = { "request": "join", "room": room, "ptype": "listener", "feed": id };
-// 				remoteFeed.send({"message": listen});
-// 			},
-// 			error: function(error) {
-// 				Janus.error("  -- Error attaching plugin...", error);
-// 				bootbox.alert("Error attaching plugin... " + error);
-// 			},
-// 			onmessage: function(msg, jsep) {
-// 				Janus.debug(" ::: Got a message (listener) :::");
-// 				Janus.debug(msg);
-// 				var event = msg["videoroom"];
-// 				Janus.debug("Event: " + event);
-// 				if(event != undefined && event != null) {
-// 					if(event === "attached") {
-// 						// Subscriber created and attached
-// 						if(spinner === undefined || spinner === null) {
-// 							var target = document.getElementById('#screencapture');
-// 							spinner = new Spinner({top:100}).spin(target);
-// 						} else {
-// 							spinner.spin();
-// 						}
-// 						Janus.log("Successfully attached to feed " + id + " (" + display + ") in room " + msg["room"]);
-// 						$('#screenmenu').hide();
-// 						$('#room').removeClass('hide').show();
-// 					} else {
-// 						// What has just happened?
-// 					}
-// 				}
-// 				if(jsep !== undefined && jsep !== null) {
-// 					Janus.debug("Handling SDP as well...");
-// 					Janus.debug(jsep);
-// 					// Answer and attach
-// 					remoteFeed.createAnswer(
-// 						{
-// 							jsep: jsep,
-// 							media: { audioSend: false, videoSend: false },	// We want recvonly audio/video
-// 							success: function(jsep) {
-// 								Janus.debug("Got SDP!");
-// 								Janus.debug(jsep);
-// 								var body = { "request": "start", "room": room };
-// 								remoteFeed.send({"message": body, "jsep": jsep});
-// 							},
-// 							error: function(error) {
-// 								Janus.error("WebRTC error:", error);
-// 								bootbox.alert("WebRTC error... " + error);
-// 							}
-// 						});
-// 				}
-// 			},
-// 			onlocalstream: function(stream) {
-// 				// The subscriber stream is recvonly, we don't expect anything here
-// 				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-// 			},
-// 			onremotestream: function(stream) {
-// 				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-// 				Janus.attachMediaStream($('#screenvideo').get(0), stream);
-// 			},
-// 			oncleanup: function() {
-// 				Janus.log(" ::: Got a cleanup notification (remote feed " + id + ") :::");
-// 				$('#waitingvideo').remove();
-// 				if(spinner !== null && spinner !== undefined)
-// 					spinner.stop();
-// 				spinner = null;
-// 			}
-// 		});
-// }
 
 
 //#########################EXPERIMENTING AREA ###############################################
-
-function publishOwnFeed(useAudio) {
-	// Publish our stream
-	// $('#publish').attr('disabled', true).unbind('click');
-	screentest.createOffer(
-		{
-			// Add data:true here if you want to publish datachannels as well
-			media: { audioRecv: false, videoRecv: false, audioSend: useAudio, videoSend: true },	// Publishers are sendonly
-			// If you want to test simulcasting (Chrome and Firefox only), then
-			// pass a ?simulcast=true when opening this demo page: it will turn
-			// the following 'simulcast' property to pass to janus.js to true
-			simulcast: doSimulcast,
-			simulcast2: doSimulcast2,
-			success: function(jsep) {
-				Janus.debug("Got publisher SDP!");
-				Janus.debug(jsep);
-				var publish = { "request": "configure", "audio": useAudio, "video": true };
-				// You can force a specific codec to use when publishing by using the
-				// audiocodec and videocodec properties, for instance:
-				// 		publish["audiocodec"] = "opus"
-				// to force Opus as the audio codec to use, or:
-				// 		publish["videocodec"] = "vp9"
-				// to force VP9 as the videocodec to use. In both case, though, forcing
-				// a codec will only work if: (1) the codec is actually in the SDP (and
-				// so the browser supports it), and (2) the codec is in the list of
-				// allowed codecs in a room. With respect to the point (2) above,
-				// refer to the text in janus.plugin.videoroom.cfg for more details
-				screentest.send({"message": publish, "jsep": jsep});
-			},
-			error: function(error) {
-				Janus.error("WebRTC error:", error);
-				if (useAudio) {
-					 publishOwnFeed(false);
-				} else {
-					bootbox.alert("WebRTC error... " + JSON.stringify(error));
-					//$('#publish').removeAttr('disabled').click(function() { publishOwnFeed(true); });
-				}
-			}
-		});
-}
-
 
 function screenPublisherInit(){
 	janus.attach(
@@ -416,7 +269,7 @@ function screenPublisherInit(){
 						myid = msg["id"];
 						// $('#session').html(room);
 						// $('#title').html(msg["description"]);
-						console.log("Session id: "+room);
+						console.log("Screen share Session id: "+room);
 						console.log("Room Title: "+msg["description"]);
 						Janus.log("Successfully joined room " + msg["room"] + " with ID " + myid);
 						if(role === "publisher") {
@@ -524,7 +377,30 @@ function webCamPublisherInit(){
 				$('#details').remove();
 				cameratest = pluginHandle;
 				Janus.log("Plugin attached! (" + cameratest.getPlugin() + ", id=" + cameratest.getId() + ")");
-				preShareScreen2();
+				
+				//webcam publisher register
+				console.log("this is the room(webcam try connect): "+room);
+				myusername = randomString(12);
+				var register = { "request": "join", "room": room, "ptype": "publisher", "display": "webcam_publisher" };
+				cameratest.send({"message": register});
+
+
+
+				// var desc = "test-webcam-capture";
+				// role = "publisher";
+				// var create = { "request": "create", "description": desc, "bitrate": 500000, "publishers": 1 };
+				// cameratest.send({"message": create, success: function(result) {
+				// 	var event = result["videoroom"];
+				// 	Janus.debug("Event: " + event);
+				// 	if(event != undefined && event != null) {
+				// 		// Our own webcam sharing session has been created, join it
+				// 		room = result["room"];
+				// 		Janus.log("Webcam sharing session created: " + room);
+				// 		myusername = randomString(12);
+				// 		var register = { "request": "join", "room": room, "ptype": "publisher", "display": myusername };
+				// 		cameratest.send({"message": register});
+				// 	}
+				// }});
 				console.log("webcam share function below");
 				$('#start').removeAttr('disabled').html("Stop Streaming")
 					.click(function() {
@@ -765,10 +641,11 @@ function preShareScreen2() {
 
 function shareScreen2() {
 	// Create a new room
-    //var desc = $('#desc').val();
-    var desc = "test-screen-capture";
+	//var desc = $('#desc').val();
+	console.log("YOU ARE NOW IN shareScreen2");
+    var desc = "test-webcam-capture";
 	role = "publisher";
-	var create = { "request": "create", "description": desc, "bitrate": 500000, "publishers": 2 };
+	var create = { "request": "create", "description": desc, "bitrate": 500000, "publishers": 1 };
 	cameratest.send({"message": create, success: function(result) {
 		var event = result["videoroom"];
 		Janus.debug("Event: " + event);

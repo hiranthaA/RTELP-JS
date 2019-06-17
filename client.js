@@ -177,15 +177,24 @@ $(document).ready(function() {
 												console.log("******************************");
 												if(msg["publishers"] !== undefined && msg["publishers"] !== null) {
 													var list = msg["publishers"];
+													console.log(list);
 													Janus.debug("Got a list of available publishers/feeds:");
 													Janus.debug(list);
-													for(var f in list) {
-														var id = list[f]["id"];
-														var display = list[f]["display"];
-														Janus.debug("  >> [" + id + "] " + display);
-														//attach publisher's remotevideo to client video player
-														newRemoteFeed(id, display)
-													}
+
+													newRemoteFeed(list[1]["id"]);
+													newCameraRemoteFeed(list[0]["id"]);
+
+
+													// for(var f in list) {
+													// 	var id = list[f]["id"];
+													// 	var display = list[f]["display"];
+													// 	Janus.debug("  >> [" + id + "] " + display);
+													// 	//attach publisher's remotevideo to client video player
+													// 	console.log(list[0]);
+													// 	console.log(list[1]);
+													// 	console.log("FeedID is :"+id+" and displayname is :"+display);
+													// 	newRemoteFeed(id, display)
+													// }
 												}
 											}
 										} else if(event === "event") {
@@ -195,6 +204,9 @@ $(document).ready(function() {
 												var list = msg["publishers"];
 												Janus.debug("Got a list of available publishers/feeds:");
 												Janus.debug(list);
+
+												
+
 												for(var f in list) {
 													var id = list[f]["id"];
 													var display = list[f]["display"];
@@ -424,6 +436,7 @@ function newRemoteFeed(id, display) {
 				// The subscriber stream is recvonly, we don't expect anything here
 			},
 			onremotestream: function(stream) {
+				console.log(stream);
 				Janus.attachMediaStream($('#screenvideo').get(0), stream);
 			},
 			oncleanup: function() {
@@ -500,4 +513,83 @@ function getAllUrlParams(url) {
   
     return obj;
   }
+
+  //################## Experimental area %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  function newCameraRemoteFeed(id, display) {
+	// A new feed has been published, create a new plugin handle and attach to it as a listener
+	source = id;
+	var remoteFeed = null;
+	janus.attach(
+		{
+			plugin: "janus.plugin.videoroom",
+			opaqueId: opaqueId,
+			success: function(pluginHandle) {
+				remoteFeed = pluginHandle;
+				Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
+				Janus.log("  -- This is a subscriber");
+				// We wait for the plugin to send us an offer
+				var listen = { "request": "join", "room": room, "ptype": "listener", "feed": id };
+				remoteFeed.send({"message": listen});
+			},
+			error: function(error) {
+				Janus.error("  -- Error attaching plugin...", error);
+				bootbox.alert("Error attaching plugin... " + error);
+			},
+			onmessage: function(msg, jsep) {
+				Janus.debug(" ::: Got a message (listener) :::");
+				Janus.debug(msg);
+				var event = msg["videoroom"];
+				Janus.debug("Event: " + event);
+				if(event != undefined && event != null) {
+					if(event === "attached") {
+						// Subscriber created and attached
+						if(spinner === undefined || spinner === null) {
+							var target = document.getElementById('#screencapture');
+							spinner = new Spinner({top:100}).spin(target);
+						} else {
+							spinner.spin();
+						}
+						Janus.log("Successfully attached to feed " + id + " (" + display + ") in room " + msg["room"]);
+					} else {
+						// What has just happened?
+					}
+				}
+				if(jsep !== undefined && jsep !== null) {
+					Janus.debug("Handling SDP as well...");
+					Janus.debug(jsep);
+					// Answer and attach
+					remoteFeed.createAnswer(
+						{
+							jsep: jsep,
+							media: { audioSend: false, videoSend: false },	// We want recvonly audio/video
+							success: function(jsep) {
+								Janus.debug("Got SDP!");
+								Janus.debug(jsep);
+								var body = { "request": "start", "room": room };
+								remoteFeed.send({"message": body, "jsep": jsep});
+							},
+							error: function(error) {
+								Janus.error("WebRTC error:", error);
+								bootbox.alert("WebRTC error... " + error);
+							}
+						});
+				}
+			},
+			onlocalstream: function(stream) {
+				// The subscriber stream is recvonly, we don't expect anything here
+			},
+			onremotestream: function(stream) {
+				console.log(stream);
+				Janus.attachMediaStream($('#cameravideo').get(0), stream);
+			},
+			oncleanup: function() {
+				Janus.log(" ::: Got a cleanup notification (remote feed " + id + ") :::");
+				$('#waitingvideo').remove();
+				if(spinner !== null && spinner !== undefined)
+					spinner.stop();
+				spinner = null;
+			}
+		});
+}
   
