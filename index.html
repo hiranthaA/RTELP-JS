@@ -26,31 +26,68 @@
 <body>
 <div class="container">
 	<div class="row">
-		<div class="col-md-12">
-			<div>
-				<h1>Real-time e-Learning Platform - Admin</h1>
-                <button class="btn btn-success" autocomplete="off" id="start">Start Streaming</button>
+        <div>
+            <h1>Real-time e-Learning Platform - Admin</h1>
+            <button class="btn btn-success" autocomplete="off" id="start">Start Streaming</button>
+            <h4><p id="roomidlabel">Room ID: </p></h3>
+        </div>
+        <hr>
+		<div id="preview" class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+            <div class="row" id="screenrow">
+                <div id="screenvideoplayer" class="player col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8" >
+                    <video class="rounded centered" id="screenvideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
+                </div>
+                <div id="devicesScreen" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+
+                </div>
             </div>
-			<div class="container" id="room">
-                    <h3>Preview</h3>
-				<div class="row">
-                    <div class="panel-content">
-                        <div class="panel-body col-12 col-sm-6 col-md-12 col-lg-6 col-xl-6" id="screencapture">
-                            <div class="player" id="screenvideoplayer">
-                                <video class="rounded centered" id="screenvideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
-                            </div>
-                        </div>
-                        <div class="panel-body col-12 col-sm-6 col-md-12 col-lg-6 col-xl-6" id="cameracapture">
-                            <div class="player" id="cameravideoplayer">
-                                <video class="rounded centered" id="cameravideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
-                            </div>
-                        </div>
-                    </div>
-				</div>
-			</div>
-		</div>
+            <div class="row" id="camerarow">
+                <div id="cameravideoplayer" class="player col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8" >
+                    <video class="rounded centered" id="cameravideo" width="100%" height="100%" autoplay="" playsinline="" muted="muted"></video>
+                </div>
+                <div id="devicesCamera" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                    <button id="btnCameraSettings" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                        Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="chatwindow" class="col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <h4>Chat window</h4>
+        </div>
+    <!-- end of the row-->
 	</div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Change Input Devices</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline">
+                    <div class="form-group" style="margin-right: 20px;">
+                        <label for="audio-device">Audio device (input):</label>
+                        <select id="audio-device" class="form-control"></select>
+                    </div>
+                    <div class="form-group" style="margin-right: 20px;">
+                        <label for="video-device">Video device (input):</label>
+                        <select id="video-device" class="form-control"></select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="change-devices" type="button" class="btn btn-primary">Apply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

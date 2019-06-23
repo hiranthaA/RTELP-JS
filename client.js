@@ -35,47 +35,6 @@ function randomString(len, charSet) {
 
 
 $(document).ready(function() {
-
-	//toggle screen layout button implementation
-	let video = document.getElementById('cameravideo');
-	let togglePipButton = document.getElementById('btnpipswitch');
-	let divObj = document.getElementById("screenvideo");
-
-    togglePipButton.addEventListener('click', async function (event) {
-        togglePipButton.disabled = true; //disable toggle button while the event occurs
-        try {
-            // If there is no element in Picture-in-Picture yet, request for it
-            if (video !== document.pictureInPictureElement) {
-				if (divObj.requestFullscreen) {
-					divObj.requestFullscreen();
-				  }
-				  else if (divObj.msRequestFullscreen) {
-					divObj.msRequestFullscreen();
-				  }
-				  else if (divObj.mozRequestFullScreen) {
-					divObj.mozRequestFullScreen();
-				  }
-				  else if (divObj.webkitRequestFullscreen) {
-					divObj.webkitRequestFullscreen();
-				  } else {
-					console.log("Fullscreen API is not supported");
-				  }
-				await video.requestPictureInPicture();
-				
-            }
-            // If Picture-in-Picture already exists, exit the mode
-            else {
-                await document.exitPictureInPicture();
-            }
-
-        } catch (error) {
-            console.log(`Oh Horror! ${error}`);
-        } finally {
-            togglePipButton.disabled = false; //enable toggle button after the event
-		}
-	});
-	
-
 	// Initialize the library (all console debuggers enabled)
 	Janus.init({debug: "all", callback: function() {
 		// Use a button to start the demo
@@ -465,4 +424,3 @@ function getAllUrlParams(url) {
 			}
 		});
 }
-  

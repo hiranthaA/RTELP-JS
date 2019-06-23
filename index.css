@@ -5,11 +5,31 @@
 .panel-body{
     
 }
-
+/* 
 #screenvideoplayer{
     background-color: yellow;
+} */
+
+/* #cameravideoplayer{
+    background-color: blue;
+} */
+
+/* #preview{
+    background-color: green;
+} */
+
+#camerarow{
+    border-style: solid;
+    margin-right: 1px;
+    
 }
 
-#cameravideoplayer{
-    background-color: blue;
+#screenrow{
+    border-style: solid;
+    margin-bottom: 2px;
+    margin-right: 1px;
+}
+
+#chatwindow{
+    border-style: solid
 }
