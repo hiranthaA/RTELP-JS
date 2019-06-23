@@ -18,6 +18,14 @@
     background-color: green;
 } */
 
-/* #chatwindow{
-    background-color: gray;
-} */
+#camerarow{
+    border-style: solid;
+}
+
+#screenrow{
+    border-style: solid;
+}
+
+#chatwindow{
+    border-style: solid
+}
