@@ -24,7 +24,7 @@ var source = null;
 
 var spinner = null;
 
-var doSimulcast = false;
+var doSimulcast = true;
 var firstTime = false;
 var audioDeviceId = null;
 var videoDeviceId = null;
@@ -213,6 +213,7 @@ function screenPublisherInit(){
 						screentest.createOffer(
 							{
 								media: { video: capture, audioSend: true, videoRecv: false},	// Screen sharing Publishers are sendonly
+								simulcast: doSimulcast,
 								success: function(jsep) {
 									Janus.debug("Got publisher SDP!");
 									Janus.debug(jsep);
@@ -360,7 +361,7 @@ function webCamPublisherInit(){
 								// If you want to test simulcasting (Chrome and Firefox only), then
 								// pass a ?simulcast=true when opening this demo page: it will turn
 								// the following 'simulcast' property to pass to janus.js to true
-								simulcast: false,
+								simulcast: doSimulcast,
 								simulcast2: false,
 								success: function(jsep) {
 									Janus.debug("Got publisher SDP!");

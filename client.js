@@ -21,6 +21,9 @@ var source = null;
 
 var spinner = null;
 
+var remoteFeedScreen = null;
+var remoteFeedCamera = null;
+
 
 // Just an helper to generate random usernames
 function randomString(len, charSet) {
@@ -35,6 +38,19 @@ function randomString(len, charSet) {
 
 
 $(document).ready(function() {
+
+	$('#simhigh').click(function() {
+		screentest.send({message: { substream: 2 }});
+	});
+	$('#simnormal').click(function() {
+		screentest.send({message: { substream: 1 }});
+	});
+	$('#simlow').click(function() {
+		screentest.send({message: { substream: 0 }});
+	});
+
+
+
 	// Initialize the library (all console debuggers enabled)
 	Janus.init({debug: "all", callback: function() {
 		// Use a button to start the demo
@@ -209,18 +225,18 @@ function joinScreen() {
 function newScreenRemoteFeed(id, display) {
 	// A new feed has been published, create a new plugin handle and attach to it as a listener
 	source = id;
-	var remoteFeed = null;
+	
 	janus.attach(
 		{
 			plugin: "janus.plugin.videoroom",
 			opaqueId: opaqueId,
 			success: function(pluginHandle) {
-				remoteFeed = pluginHandle;
-				Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
+				remoteFeedScreen = pluginHandle;
+				Janus.log("Plugin attached! (" + remoteFeedScreen.getPlugin() + ", id=" + remoteFeedScreen.getId() + ")");
 				Janus.log("  -- This is a subscriber");
 				// We wait for the plugin to send us an offer
 				var listen = { "request": "join", "room": room, "ptype": "listener", "feed": id };
-				remoteFeed.send({"message": listen});
+				remoteFeedScreen.send({"message": listen});
 			},
 			error: function(error) {
 				Janus.error("  -- Error attaching plugin...", error);
@@ -249,7 +265,7 @@ function newScreenRemoteFeed(id, display) {
 					Janus.debug("Handling SDP as well...");
 					Janus.debug(jsep);
 					// Answer and attach
-					remoteFeed.createAnswer(
+					remoteFeedScreen.createAnswer(
 						{
 							jsep: jsep,
 							media: { audioSend: false, videoSend: false },	// We want recvonly audio/video
@@ -257,7 +273,7 @@ function newScreenRemoteFeed(id, display) {
 								Janus.debug("Got SDP!");
 								Janus.debug(jsep);
 								var body = { "request": "start", "room": room };
-								remoteFeed.send({"message": body, "jsep": jsep});
+								remoteFeedScreen.send({"message": body, "jsep": jsep});
 							},
 							error: function(error) {
 								Janus.error("WebRTC error:", error);
@@ -351,18 +367,17 @@ function getAllUrlParams(url) {
   function newCameraRemoteFeed(id, display) {
 	// A new feed has been published, create a new plugin handle and attach to it as a listener
 	source = id;
-	var remoteFeed = null;
 	janus.attach(
 		{
 			plugin: "janus.plugin.videoroom",
 			opaqueId: opaqueId,
 			success: function(pluginHandle) {
-				remoteFeed = pluginHandle;
-				Janus.log("Plugin attached! (" + remoteFeed.getPlugin() + ", id=" + remoteFeed.getId() + ")");
+				remoteFeedCamera = pluginHandle;
+				Janus.log("Plugin attached! (" + remoteFeedCamera.getPlugin() + ", id=" + remoteFeedCamera.getId() + ")");
 				Janus.log("  -- This is a subscriber");
 				// We wait for the plugin to send us an offer
 				var listen = { "request": "join", "room": room, "ptype": "listener", "feed": id };
-				remoteFeed.send({"message": listen});
+				remoteFeedCamera.send({"message": listen});
 			},
 			error: function(error) {
 				Janus.error("  -- Error attaching plugin...", error);
@@ -391,7 +406,7 @@ function getAllUrlParams(url) {
 					Janus.debug("Handling SDP as well...");
 					Janus.debug(jsep);
 					// Answer and attach
-					remoteFeed.createAnswer(
+					remoteFeedCamera.createAnswer(
 						{
 							jsep: jsep,
 							media: { audioSend: false, videoSend: false },	// We want recvonly audio/video
@@ -399,7 +414,7 @@ function getAllUrlParams(url) {
 								Janus.debug("Got SDP!");
 								Janus.debug(jsep);
 								var body = { "request": "start", "room": room };
-								remoteFeed.send({"message": body, "jsep": jsep});
+								remoteFeedCamera.send({"message": body, "jsep": jsep});
 							},
 							error: function(error) {
 								Janus.error("WebRTC error:", error);
