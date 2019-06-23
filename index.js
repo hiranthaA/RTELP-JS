@@ -190,7 +190,8 @@ function screenPublisherInit(){
 				Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
 				$("#screencapture").parent().unblock();
 				if(on) {
-					bootbox.alert("Your screen sharing session just started: pass the <b>" + room + "</b> session identifier to those who want to attend.");
+					//bootbox.alert("Your screen sharing session just started: pass the <b>" + room + "</b> session identifier to those who want to attend.");
+					$("#roomidlabel").text("Room ID: "+room);
 				} else {
 					bootbox.alert("Your screen sharing session just stopped.", function() {
 						janus.destroy();
@@ -332,7 +333,8 @@ function webCamPublisherInit(){
 				Janus.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
 				$("#screencapture").parent().unblock();
 				if(on) {
-					bootbox.alert("Your screen sharing session just started: pass the <b>" + room + "</b> session identifier to those who want to attend.");
+					//bootbox.alert("Your screen sharing session just started: pass the <b>" + room + "</b> session identifier to those who want to attend.");
+					$("#roomidlabel").text("Room ID: "+room);
 				} else {
 					bootbox.alert("Your screen sharing session just stopped.", function() {
 						janus.destroy();

@@ -20,10 +20,14 @@
 
 #camerarow{
     border-style: solid;
+    margin-right: 1px;
+    
 }
 
 #screenrow{
     border-style: solid;
+    margin-bottom: 2px;
+    margin-right: 1px;
 }
 
 #chatwindow{
