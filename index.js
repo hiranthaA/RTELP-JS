@@ -47,6 +47,7 @@ $(document).ready(function() {
 		// Use a button to start the demo
 		Janus.listDevices(initDevices);
 		$('#start').one('click', function() {
+			$('#btnCameraSettings').removeClass('hide');
 			$(this).attr('disabled', true).unbind('click');
 			// Make sure the browser supports WebRTC
 			if(!Janus.isWebrtcSupported()) {
@@ -464,37 +465,6 @@ function initDevices(devices) {
 			$('#audio-device').append(option);
 		} else if(device.kind === 'videoinput') {
 			$('#video-device').append(option);
-		} else if(device.kind === 'audiooutput') {
-			// Apparently only available from Chrome 49 on?
-			// https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/setSinkId
-			// Definitely missing in Safari at the moment: https://bugs.webkit.org/show_bug.cgi?id=179415
-			// $('#output-devices').removeClass('hide');
-			// $('#audiooutput').append('<li><a href="#" id="' + device.deviceId + '">' + label + '</a></li>');
-			// $('#audiooutput a').unbind('click')
-			// 	.click(function() {
-			// 		var deviceId = $(this).attr("id");
-			// 		var label = $(this).text();
-			// 		Janus.log("Trying to set device " + deviceId + " (" + label + ") as sink for the output");
-			// 		if($('#peervideo').length === 0) {
-			// 			Janus.error("No remote video element available");
-			// 			bootbox.alert("No remote video element available");
-			// 			return false;
-			// 		}
-			// 		if(!$('#peervideo').get(0).setSinkId) {
-			// 			Janus.error("SetSinkId not supported");
-			// 			bootbox.warn("SetSinkId not supported");
-			// 			return false;
-			// 		}
-			// 		$('#peervideo').get(0).setSinkId(deviceId)
-			// 			.then(function() {
-			// 				Janus.log('Audio output device attached:', deviceId);
-			// 				$('#outputdeviceset').html(label + '<span class="caret"></span>').parent().removeClass('open');
-			// 			}).catch(function(error) {
-			// 				Janus.error(error);
-			// 				bootbox.alert(error);
-			// 			});
-			// 		return false;
-			// 	});
 		}
 	});
 
